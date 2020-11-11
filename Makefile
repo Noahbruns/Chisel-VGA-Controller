@@ -7,5 +7,5 @@ VGADriver:
 VGADriver-test:
 	$(SBT) "test:runMain simple.VGADriverTest"
 
-VGADriver-view:
-	./gtkwave generated/simple.VGADriverTest2108977987/VGA.vcd --save=VGA.gtkw
+VGADriver-view: VGADriver-test
+	gtkwave generated/simple.VGADriverTest/VGA.vcd --save=VGA.gtkw
