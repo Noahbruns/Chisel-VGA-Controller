@@ -10,22 +10,22 @@ module VGADriver(
   output [7:0] io_G,
   output [7:0] io_B
 );
-  reg  cntReg; // @[VGADriver.scala 31:23]
+  reg  cntReg; // @[VGADriver.scala 32:23]
   reg [31:0] _RAND_0;
-  reg  pixel_clock; // @[VGADriver.scala 32:28]
+  reg  pixel_clock; // @[VGADriver.scala 33:28]
   reg [31:0] _RAND_1;
-  wire  _T_1; // @[VGADriver.scala 34:20]
-  wire  _T_3; // @[VGADriver.scala 37:20]
-  assign _T_1 = cntReg + 1'h1; // @[VGADriver.scala 34:20]
-  assign _T_3 = ~ pixel_clock; // @[VGADriver.scala 37:20]
-  assign io_pixel_clock = pixel_clock; // @[VGADriver.scala 39:18]
-  assign io_n_sync = 1'h0; // @[VGADriver.scala 45:13]
-  assign io_n_blank = 1'h0; // @[VGADriver.scala 46:14]
-  assign io_h_sync = 1'h0; // @[VGADriver.scala 48:13]
-  assign io_v_sync = 1'h0; // @[VGADriver.scala 49:13]
-  assign io_R = 8'h0; // @[VGADriver.scala 41:8]
-  assign io_G = 8'hff; // @[VGADriver.scala 42:8]
-  assign io_B = 8'h0; // @[VGADriver.scala 43:8]
+  wire  _T_1; // @[VGADriver.scala 35:20]
+  wire  _T_3; // @[VGADriver.scala 38:20]
+  assign _T_1 = cntReg + 1'h1; // @[VGADriver.scala 35:20]
+  assign _T_3 = ~ pixel_clock; // @[VGADriver.scala 38:20]
+  assign io_pixel_clock = pixel_clock; // @[VGADriver.scala 40:18]
+  assign io_n_sync = 1'h0; // @[VGADriver.scala 46:13]
+  assign io_n_blank = 1'h0; // @[VGADriver.scala 53:16]
+  assign io_h_sync = 1'h0; // @[VGADriver.scala 54:15]
+  assign io_v_sync = 1'h0; // @[VGADriver.scala 55:15]
+  assign io_R = 8'h0; // @[VGADriver.scala 42:8]
+  assign io_G = 8'hff; // @[VGADriver.scala 43:8]
+  assign io_B = 8'h0; // @[VGADriver.scala 44:8]
 `ifdef RANDOMIZE_GARBAGE_ASSIGN
 `define RANDOMIZE
 `endif

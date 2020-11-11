@@ -6,6 +6,7 @@
 
 import chisel3._
 import chisel3.Driver
+import chisel3.experimental.withClock
 
 import VGAController._
 
@@ -29,7 +30,7 @@ class VGADriver extends Module {
 
   /* Devide clock to generate Pixel clock */
   val cntReg = RegInit(0.U(1.W))
-  val pixel_clock = RegInit(0.U(1.W))
+  val pixel_clock = RegInit(false.B)
 
   cntReg := cntReg + 1.U
   when(cntReg === 1.U) {
@@ -42,15 +43,17 @@ class VGADriver extends Module {
   io.G := 255.U
   io.B := 0.U
 
-  val controller = Module(new VGAController())
+  io.n_sync := 0.U // Pulled to 0 because sync using green channel not used
 
-  controller.io.pixel_clock := pixel_clock
+  val pixel_clock_c = pixel_clock.asClock
 
-  io.n_sync := 0.U // Pulled to 0 because sync using green channel not used.
-  io.n_blank := controller.io.n_blank
+  withClock(pixel_clock_c) {
+    val controller = Module(new VGAController())
 
-  io.h_sync := controller.io.h_sync
-  io.v_sync := controller.io.v_sync
+    io.n_blank := controller.io.n_blank
+    io.h_sync := controller.io.h_sync
+    io.v_sync := controller.io.v_sync
+  }
 }
 
 /**
