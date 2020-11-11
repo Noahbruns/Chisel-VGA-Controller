@@ -1,7 +1,7 @@
 import chisel3.iotesters.PeekPokeTester
 import org.scalatest._
 
-class HelloSpec extends FlatSpec with Matchers {
+/*class HelloSpec extends FlatSpec with Matchers {
 
   "Hello" should "pass" in {
     chisel3.iotesters.Driver(() => new Hello()) { c =>
@@ -23,5 +23,4 @@ class HelloSpec extends FlatSpec with Matchers {
     } should be (true)
   }
 
-}
-
+}*/

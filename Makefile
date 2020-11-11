@@ -2,4 +2,4 @@ SBT = sbt
 
 # Generate Verilog code
 hdl:
-	$(SBT) "runMain Hello"
+	$(SBT) "runMain VGADriver"
