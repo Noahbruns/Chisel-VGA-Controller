@@ -1,3 +1,7 @@
 project/**
 target/**
 generated/**
+
+VGADriver.v
+VGADriver.fir
+VGADriver.anno.json
