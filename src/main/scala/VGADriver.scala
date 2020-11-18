@@ -33,11 +33,9 @@ class VGADriver extends Module {
   val cntReg = RegInit(0.U(1.W))
   val pixel_clock = RegInit(false.B)
 
-  cntReg := cntReg + 1.U
-  when(cntReg === 1.U) {
-    cntReg := 0.U
-    pixel_clock := ~pixel_clock
-  }
+  // Clock devide by 2
+  pixel_clock := ~pixel_clock
+
   io.pixel_clock := pixel_clock
 
   io.R := 0.U
