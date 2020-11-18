@@ -2,7 +2,7 @@ SBT = sbt
 
 # Generate Verilog code
 VGADriver:
-	$(SBT) "runMain VGADriver"
+	$(SBT) "runMain VGADriver.VGADriver"
 
 VGADriver-test:
 	$(SBT) "test:runMain simple.VGADriverTest"
