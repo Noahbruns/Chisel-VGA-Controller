@@ -51,21 +51,15 @@ class VGADriver extends Module {
 
     val new_frame = controller.io.new_frame
 
-    val color = RegInit(false.B)
+    val color = RegInit(0.U(8.W))
 
     when(new_frame === 1.U) {
-      color := ~color
+      color := color + 1.U
     }
 
-    when(color) {
-      io.R := 0.U
-      io.G := 255.U
-      io.B := 0.U
-    }.otherwise {
-      io.R := 255.U
-      io.G := 0.U
-      io.B := 0.U
-    }
+    io.R := 0.U
+    io.G := 0.U
+    io.B := color
   }
 }
 
