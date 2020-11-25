@@ -1,5 +1,7 @@
 SBT = sbt
 
+#export _JAVA_OPTIONS="-Xmx8g"
+
 # Generate Verilog code
 VGADriver:
 	$(SBT) "runMain VGADriver.VGADriver"

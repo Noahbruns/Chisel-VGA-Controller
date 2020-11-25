@@ -18,7 +18,7 @@ class VGAController extends Module {
   val v_front_porch = 1 // in lines
   val v_back_porch = 23
   val v_sync = 4
-  val v_display = 640
+  val v_display = 600
 
   val frame_height = v_display + v_front_porch + v_sync + v_back_porch
 
@@ -36,7 +36,7 @@ class VGAController extends Module {
 
   // Generate Counter
   h_cntReg := h_cntReg + 1.U
-  when(h_cntReg === frame_width.U) {
+  when(h_cntReg === (frame_width - 1).U) {
     h_cntReg := 0.U
     v_cntReg := v_cntReg + 1.U
   }
@@ -46,7 +46,7 @@ class VGAController extends Module {
   }
 
   // output v_sync
-  when (v_cntReg > (v_display + v_front_porch).U && v_cntReg < (v_display + v_front_porch + v_sync).U) {
+  when (v_cntReg >= (v_display + v_front_porch).U && v_cntReg < (v_display + v_front_porch + v_sync).U) {
     io.v_sync := 1.U
   }
   .otherwise {
@@ -54,7 +54,7 @@ class VGAController extends Module {
   }
 
   // output h_sync
-  when (h_cntReg > (h_display + h_front_porch).U && h_cntReg < (h_display + h_front_porch + h_sync).U) {
+  when (h_cntReg >= (h_display + h_front_porch).U && h_cntReg < (h_display + h_front_porch + h_sync).U) {
     io.h_sync := 1.U
   }
   .otherwise {
