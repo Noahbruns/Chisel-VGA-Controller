@@ -38,10 +38,6 @@ class VGADriver extends Module {
 
   io.pixel_clock := pixel_clock
 
-  io.R := 0.U
-  io.G := 255.U
-  io.B := 0.U
-
   io.n_sync := 0.U // Pulled to 0 because sync using green channel not used
 
   val pixel_clock_c = pixel_clock.asClock
@@ -52,6 +48,24 @@ class VGADriver extends Module {
     io.n_blank := controller.io.n_blank
     io.h_sync := controller.io.h_sync
     io.v_sync := controller.io.v_sync
+
+    val new_frame = controller.io.new_frame
+
+    val color = RegInit(false.B)
+
+    when(new_frame === 1.U) {
+      color := ~color
+    }
+
+    when(color) {
+      io.R := 0.U
+      io.G := 255.U
+      io.B := 0.U
+    }.otherwise {
+      io.R := 255.U
+      io.G := 0.U
+      io.B := 0.U
+    }
   }
 }
 

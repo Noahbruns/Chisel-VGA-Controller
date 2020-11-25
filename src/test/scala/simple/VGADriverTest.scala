@@ -9,7 +9,7 @@ import VGADriver._
  * Test the VGADriver design
  */
 class VGADriverTester(dut: VGADriver) extends PeekPokeTester(dut) {
-  step(5000000)
+  step(2000000)
 }
 
 

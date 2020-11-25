@@ -8,11 +8,13 @@ class VGAController extends Module {
     val n_blank = Output(UInt(1.W))
     val h_sync = Output(UInt(1.W))
     val v_sync = Output(UInt(1.W))
+    val new_frame = Output(UInt(1.W))
   })
 
   io.n_blank := 0.U
   io.h_sync := 0.U
   io.v_sync := 0.U
+  io.new_frame := 0.U
 
   /* Vertical */
   val v_front_porch = 1 // in lines
@@ -43,6 +45,7 @@ class VGAController extends Module {
 
   when(v_cntReg === frame_height.U) {
     v_cntReg := 0.U
+    io.new_frame := 1.U
   }
 
   // output v_sync
