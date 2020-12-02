@@ -11,7 +11,6 @@ package VGADriver
 import chisel3._
 
 import VGAController._
-import PixelBuffer._
 
 /*
  * The blinking LED component.
@@ -40,17 +39,9 @@ class VGADriver extends Module {
   io.h_sync := controller.io.h_sync
   io.v_sync := controller.io.v_sync
 
-  val new_frame = controller.io.new_frame
-
-  val PixelBuffer = Module(new PixelBuffer())
-  
-  PixelBuffer.io.new_frame := new_frame // Add synchronizer
-  PixelBuffer.io.enable := controller.io.n_blank
-  PixelBuffer.io.pixel_clock := controller.io.pixel_clock
-
-  io.R := PixelBuffer.io.R
-  io.G := PixelBuffer.io.G
-  io.B := PixelBuffer.io.B
+  io.R := controller.io.R
+  io.G := controller.io.G
+  io.B := controller.io.B
 }
 
 /**

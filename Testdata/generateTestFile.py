@@ -1,4 +1,4 @@
-file = open("data.txt", "w")
+file = open("data.bin.txt", "w")
 
 line = range(0, 799)
 

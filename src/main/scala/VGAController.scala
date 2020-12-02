@@ -3,6 +3,8 @@ package VGAController
 import chisel3._
 import chisel3.util._
 
+import PixelBuffer._
+
 class VGAController extends Module {
   val io = IO(new Bundle {
     val n_blank = Output(UInt(1.W))
@@ -10,9 +12,13 @@ class VGAController extends Module {
     val v_sync = Output(UInt(1.W))
     val new_frame = Output(UInt(1.W))
     val pixel_clock = Output(UInt(1.W))
+
+    val R = Output(UInt(8.W))
+    val G = Output(UInt(8.W))
+    val B = Output(UInt(8.W))
   })
 
-    /* Devide clock to generate Pixel clock */
+  /* Devide clock to generate Pixel clock */
   val cntReg = RegInit(0.U(1.W))
   val pixel_clock = RegInit(false.B)
 
@@ -33,8 +39,6 @@ class VGAController extends Module {
 
   val frame_height = v_display + v_front_porch + v_sync + v_back_porch
 
-  val v_cntReg = RegInit(0.U(log2Ceil(frame_height).W))
-
   /* Horizontal */
   val h_front_porch = 40
   val h_back_porch = 88
@@ -43,10 +47,23 @@ class VGAController extends Module {
 
   val frame_width = h_display + h_front_porch + h_sync + h_back_porch
 
+  val v_cntReg = RegInit(0.U(log2Ceil(frame_height).W))
   val h_cntReg = RegInit(0.U(log2Ceil(frame_width).W))
 
+  /* Generate Pixel buffer */
+  val PixelBuffer = Module(new PixelBuffer())
+  
+  PixelBuffer.io.new_frame := io.new_frame // Add synchronizer
+  PixelBuffer.io.enable := io.n_blank
+  PixelBuffer.io.pixel_clock := pixel_clock
+  PixelBuffer.io.h_pos := h_cntReg
+
+  io.R := PixelBuffer.io.R
+  io.G := PixelBuffer.io.G
+  io.B := PixelBuffer.io.B
+
   // Generate Counter
-  when(pixel_clock) {
+  when(~pixel_clock) {
     h_cntReg := h_cntReg + 1.U
   }
 
