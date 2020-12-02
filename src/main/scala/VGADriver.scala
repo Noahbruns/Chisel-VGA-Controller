@@ -31,32 +31,22 @@ class VGADriver extends Module {
     val B = Output(UInt(8.W))
   })
 
-  /* Devide clock to generate Pixel clock */
-  val cntReg = RegInit(0.U(1.W))
-  val pixel_clock = RegInit(false.B)
+  io.n_sync := 0.U // Pulled to 0 because sync using green channel not use
 
-  // Clock devide by 2
-  pixel_clock := ~pixel_clock
-  io.pixel_clock := pixel_clock
-  val pixel_clock_c = pixel_clock.asClock
+  val controller = Module(new VGAController())
 
-  io.n_sync := 0.U // Pulled to 0 because sync using green channel not used
+  io.pixel_clock := controller.io.pixel_clock
+  io.n_blank := controller.io.n_blank
+  io.h_sync := controller.io.h_sync
+  io.v_sync := controller.io.v_sync
 
-  val new_frame = 0.U
-
-  withClock(pixel_clock_c) {
-    val controller = Module(new VGAController())
-
-    io.n_blank := controller.io.n_blank
-    io.h_sync := controller.io.h_sync
-    io.v_sync := controller.io.v_sync
-
-    new_frame = controller.io.new_frame
-  }
+  val new_frame = controller.io.new_frame
 
   val PixelBuffer = Module(new PixelBuffer())
   
   PixelBuffer.io.new_frame := new_frame // Add synchronizer
+  PixelBuffer.io.enable := controller.io.n_blank
+  PixelBuffer.io.pixel_clock := controller.io.pixel_clock
 
   io.R := PixelBuffer.io.R
   io.G := PixelBuffer.io.G

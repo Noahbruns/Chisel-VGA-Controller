@@ -9,7 +9,16 @@ class VGAController extends Module {
     val h_sync = Output(UInt(1.W))
     val v_sync = Output(UInt(1.W))
     val new_frame = Output(UInt(1.W))
+    val pixel_clock = Output(UInt(1.W))
   })
+
+    /* Devide clock to generate Pixel clock */
+  val cntReg = RegInit(0.U(1.W))
+  val pixel_clock = RegInit(false.B)
+
+  // Clock devide by 2
+  pixel_clock := ~pixel_clock
+  io.pixel_clock := pixel_clock
 
   io.n_blank := 0.U
   io.h_sync := 0.U
@@ -37,7 +46,10 @@ class VGAController extends Module {
   val h_cntReg = RegInit(0.U(log2Ceil(frame_width).W))
 
   // Generate Counter
-  h_cntReg := h_cntReg + 1.U
+  when(pixel_clock) {
+    h_cntReg := h_cntReg + 1.U
+  }
+
   when(h_cntReg === (frame_width - 1).U) {
     h_cntReg := 0.U
     v_cntReg := v_cntReg + 1.U
