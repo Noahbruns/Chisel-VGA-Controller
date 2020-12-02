@@ -16,7 +16,7 @@ class LineMemory() extends Module {
   })
 
   val mem = SyncReadMem(size, UInt(16.W))
-  loadMemoryFromFile(mem, "Testdata/data.bin.txt")
+  loadMemoryFromFile(mem, "Testdata/data.txt")
   io.rdData := mem.read(io.rdAddr)
 
   when(io.wrEna) {
@@ -52,8 +52,8 @@ class PixelBuffer extends Module {
   val rdData = memory.io.rdData
 
   when(io.enable === 1.U) {
-    io.R := rdData >> 0
-    io.G := rdData >> 5
-    io.B := rdData >> 10
+    io.R := (rdData << 0).head(5) << 3
+    io.G := (rdData << 5).head(5) << 3
+    io.B := (rdData << 10).head(5) << 3
   }
 }
