@@ -16,7 +16,7 @@ class LineMemory() extends Module {
   })
 
   val mem = SyncReadMem(size, UInt(16.W))
-  loadMemoryFromFile(mem, "Testdata/data.txt")
+  loadMemoryFromFile(mem, "Testdata/data.bin.txt")
   io.rdData := mem.read(io.rdAddr)
 
   when(io.wrEna) {
