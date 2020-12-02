@@ -6,8 +6,8 @@
 package VGADriver
 
 import chisel3._
-import chisel3.Driver
-import chisel3.experimental.withClock
+
+import fifo._
 
 import VGAController._
 
@@ -51,15 +51,33 @@ class VGADriver extends Module {
 
     val new_frame = controller.io.new_frame
 
-    val color = RegInit(0.U(8.W))
+    val colorR = RegInit(0.U(8.W))
+    val colorG = RegInit(85.U(8.W))
+    val colorB = RegInit(170.U(8.W))
 
     when(new_frame === 1.U) {
-      color := color + 1.U
+      colorR := colorR + 1.U
+      colorG := colorG + 1.U
+      colorB := colorB + 1.U
     }
 
-    io.R := 0.U
-    io.G := 0.U
-    io.B := color
+    io.R := colorR
+    io.G := colorG
+    io.B := colorB
+
+    val fifo = Module(new FIFO(16, 512))
+
+    fifo.io.dataIn := 0.U
+    fifo.io.writeEn := false.B
+    fifo.io.writeClk := clock
+    //fifo.io.full := Output(Bool())
+    // read-domain
+    //fifo.io.dataOut := Output(UInt(width.W))
+    fifo.io.readEn := false.B
+    fifo.io.readClk := pixel_clock_c
+    //fifo.io.empty := Output(Bool())
+    // reset
+    fifo.io.systemRst := reset
   }
 }
 
