@@ -1,17 +1,19 @@
+// Chisel highlighting
+
 /*
  * This code is a minimal hardware described in Chisel.
  *
  * Blinking LED: the FPGA version of Hello World
  */
+
 package VGADriver
 
 import chisel3._
 
-import fifo._
-
 import VGAController._
+import PixelBuffer._
 
-/**
+/*
  * The blinking LED component.
  */
 
@@ -35,12 +37,12 @@ class VGADriver extends Module {
 
   // Clock devide by 2
   pixel_clock := ~pixel_clock
-
   io.pixel_clock := pixel_clock
+  val pixel_clock_c = pixel_clock.asClock
 
   io.n_sync := 0.U // Pulled to 0 because sync using green channel not used
 
-  val pixel_clock_c = pixel_clock.asClock
+  val new_frame = 0.U
 
   withClock(pixel_clock_c) {
     val controller = Module(new VGAController())
@@ -49,36 +51,16 @@ class VGADriver extends Module {
     io.h_sync := controller.io.h_sync
     io.v_sync := controller.io.v_sync
 
-    val new_frame = controller.io.new_frame
-
-    val colorR = RegInit(0.U(8.W))
-    val colorG = RegInit(85.U(8.W))
-    val colorB = RegInit(170.U(8.W))
-
-    when(new_frame === 1.U) {
-      colorR := colorR + 1.U
-      colorG := colorG + 1.U
-      colorB := colorB + 1.U
-    }
-
-    io.R := colorR
-    io.G := colorG
-    io.B := colorB
-
-    val fifo = Module(new FIFO(16, 512))
-
-    fifo.io.dataIn := 0.U
-    fifo.io.writeEn := false.B
-    fifo.io.writeClk := clock
-    //fifo.io.full := Output(Bool())
-    // read-domain
-    //fifo.io.dataOut := Output(UInt(width.W))
-    fifo.io.readEn := false.B
-    fifo.io.readClk := pixel_clock_c
-    //fifo.io.empty := Output(Bool())
-    // reset
-    fifo.io.systemRst := reset
+    new_frame = controller.io.new_frame
   }
+
+  val PixelBuffer = Module(new PixelBuffer())
+  
+  PixelBuffer.io.new_frame := new_frame // Add synchronizer
+
+  io.R := PixelBuffer.io.R
+  io.G := PixelBuffer.io.G
+  io.B := PixelBuffer.io.B
 }
 
 /**
