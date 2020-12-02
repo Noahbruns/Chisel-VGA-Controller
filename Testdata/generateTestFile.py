@@ -3,4 +3,4 @@ file = open("data.txt", "w")
 line = range(0, 799)
 
 for i in line:
-    file.write("16\n")
+    file.write("1111100000000000\n")
