@@ -25,7 +25,7 @@ class LineMemory() extends Module {
 
 class PixelBuffer() extends Module {
   val line_width = 800
-  val display_height = 800
+  val display_height = 600
 
   val io = IO(new Bundle {
     val new_frame = Input(UInt(1.W))
@@ -45,10 +45,14 @@ class PixelBuffer() extends Module {
   memory.io.wrAddr := 0.U
   memory.io.wrData := 0.U
 
-  when(io.v_pos(0)) { 
-    memory.io.rdAddr := io.h_pos + line_width.U
+  when(io.enable === 1.U) {
+    when(io.v_pos(0)) {
+      memory.io.rdAddr := io.h_pos + line_width.U
+    }.otherwise{
+      memory.io.rdAddr := io.h_pos
+    }
   }.otherwise{
-    memory.io.rdAddr := io.h_pos
+    memory.io.rdAddr := 0.U
   }
   val rdData = memory.io.rdData
 
