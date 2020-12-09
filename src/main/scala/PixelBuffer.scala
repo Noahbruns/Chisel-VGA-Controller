@@ -59,7 +59,7 @@ class PixelBuffer() extends Module {
     memory.io.wrEna  := true.B
     memory.io.wrAddr := colorCount
 
-    switch ((colorCount / 134.U) % 6.U) {
+    switch (colorCount % 800.U) / 134.U) {
       is (0.U) {
         memory.io.wrData := lila
       }
