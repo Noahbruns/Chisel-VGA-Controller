@@ -47,10 +47,14 @@ class PixelBuffer() extends Module {
   val green = RegInit(2610.U(16.W)) 
   val yellow = RegInit(59150.U(16.W)) 
   val orange = RegInit(58304.U(16.W)) 
-  val red = RegInit(51336.U(16.W)) 
+  val red = RegInit(51336.U(16.W))
+
+  memory.io.wrEna  := false.B
+  memory.io.wrAddr := 0.U
+  memory.io.wrData := 0.U
 
   //Used to fill the memory 
-  val colorCount = RegInit(0.U(1.W))
+  val colorCount = RegInit(0.U(log2Ceil(1600).W))
   when(colorCount <= 1600.U){
     memory.io.wrEna  := true.B
     memory.io.wrAddr := colorCount
@@ -58,21 +62,17 @@ class PixelBuffer() extends Module {
     colorCount := colorCount + 1.U
   }
 
-  memory.io.wrEna  := false.B
-  memory.io.wrAddr := 0.U
-  memory.io.wrData := 0.U
-
-  when(io.v_pos(0) === 0.B) {
-    when(io.enable === 1.U) {
-      memory.io.rdAddr := io.h_pos + line_width.U
-    }.otherwise {
-      memory.io.rdAddr := 0.U // Prepare for next line
-    }
-  }.otherwise{
+  when(io.v_pos(0) === 0.B) { // Switch between Memories
     when(io.enable === 1.U) {
       memory.io.rdAddr := io.h_pos
     }.otherwise {
       memory.io.rdAddr := line_width.U // Prepare for next line
+    }
+  }.otherwise{
+    when(io.enable === 1.U) {
+      memory.io.rdAddr := io.h_pos + line_width.U
+    }.otherwise {
+      memory.io.rdAddr := 0.U // Prepare for next line
     }
   }
   val rdData = memory.io.rdData
