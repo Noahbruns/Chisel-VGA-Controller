@@ -57,6 +57,7 @@ class VGAController extends Module {
   PixelBuffer.io.enable := io.n_blank
   PixelBuffer.io.pixel_clock := pixel_clock
   PixelBuffer.io.h_pos := h_cntReg
+  PixelBuffer.io.v_pos := v_cntReg
 
   io.R := PixelBuffer.io.R
   io.G := PixelBuffer.io.G

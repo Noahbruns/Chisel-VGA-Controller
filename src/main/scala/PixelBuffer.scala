@@ -5,7 +5,7 @@ import chisel3.util._
 import chisel3.util.experimental.loadMemoryFromFile
 
 class LineMemory() extends Module {
-  val size = 800
+  val size = 800 * 2
 
   val io = IO(new Bundle {
     val rdAddr = Input(UInt(log2Ceil(size).W)) 
@@ -25,6 +25,7 @@ class LineMemory() extends Module {
 
 class PixelBuffer() extends Module {
   val line_width = 800
+  val display_height = 800
 
   val io = IO(new Bundle {
     val new_frame = Input(UInt(1.W))
@@ -35,11 +36,8 @@ class PixelBuffer() extends Module {
     val G = Output(UInt(8.W))
     val B = Output(UInt(8.W))
     val h_pos = Input(UInt(log2Ceil(line_width).W))
+    val v_pos = Input(UInt(log2Ceil(display_height).W))
   })
-
-  io.R := 0.U
-  io.G := 0.U
-  io.B := 0.U
 
   val memory = Module(new LineMemory())
 
@@ -47,12 +45,20 @@ class PixelBuffer() extends Module {
   memory.io.wrAddr := 0.U
   memory.io.wrData := 0.U
 
-  memory.io.rdAddr := io.h_pos
+  when(io.v_pos(0)) { 
+    memory.io.rdAddr := io.h_pos + line_width.U
+  }.otherwise{
+    memory.io.rdAddr := io.h_pos
+  }
   val rdData = memory.io.rdData
 
+  io.R := 0.U
+  io.G := 0.U
+  io.B := 0.U
+
   when(io.enable === 1.U) {
-    io.R := (rdData << 0).head(5) << 3
-    io.G := (rdData << 5).head(5) << 3
-    io.B := (rdData << 10).head(5) << 3
+    io.R := rdData(14, 10) << 3
+    io.G := rdData(9, 5) << 3
+    io.B := rdData(4, 0) << 3
   }
 }
