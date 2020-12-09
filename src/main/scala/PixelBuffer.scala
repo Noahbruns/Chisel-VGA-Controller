@@ -58,11 +58,32 @@ class PixelBuffer() extends Module {
   when(colorCount <= 1600.U){
     memory.io.wrEna  := true.B
     memory.io.wrAddr := colorCount
-    memory.io.wrData := lila
+
+    switch ((colorCount / 134.U) % 6.U) {
+      is (0.U) {
+        memory.io.wrData := lila
+      }
+      is (1.U) {
+        memory.io.wrData := blue
+      }
+      is (2.U) {
+        memory.io.wrData := green
+      }
+      is (3.U) {
+        memory.io.wrData := yellow
+      }
+      is (4.U) {
+        memory.io.wrData := orange
+      }
+      is (5.U) {
+        memory.io.wrData := red
+      }
+    }
+
     colorCount := colorCount + 1.U
   }
 
-  when(io.v_pos(0) === 0.B) { // Switch between Memories
+  when(io.v_pos(0) === 0.B) { // Switch between Dual Memories
     when(io.enable === 1.U) {
       memory.io.rdAddr := io.h_pos
     }.otherwise {
@@ -70,7 +91,7 @@ class PixelBuffer() extends Module {
     }
   }.otherwise{
     when(io.enable === 1.U) {
-      memory.io.rdAddr := io.h_pos + line_width.U
+      memory.io.rdAddr := Cat(0.U(1.W), io.h_pos) + line_width.U // Best approach???
     }.otherwise {
       memory.io.rdAddr := 0.U // Prepare for next line
     }
