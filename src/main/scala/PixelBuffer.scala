@@ -16,7 +16,6 @@ class LineMemory() extends Module {
   })
 
   val mem = SyncReadMem(size, UInt(16.W))
-  loadMemoryFromFile(mem, "Testdata/data.txt")
   io.rdData := mem.read(io.rdAddr)
 
   when(io.wrEna) {
@@ -24,8 +23,8 @@ class LineMemory() extends Module {
   }
 }
 
-class PixelBuffer extends Module {
-  val frame_height = 800
+class PixelBuffer() extends Module {
+  val line_width = 800
 
   val io = IO(new Bundle {
     val new_frame = Input(UInt(1.W))
@@ -35,14 +34,14 @@ class PixelBuffer extends Module {
     val R = Output(UInt(8.W))
     val G = Output(UInt(8.W))
     val B = Output(UInt(8.W))
-    val h_pos = Input(UInt(log2Ceil(frame_height).W))
+    val h_pos = Input(UInt(log2Ceil(line_width).W))
   })
 
   io.R := 0.U
   io.G := 0.U
   io.B := 0.U
 
-  val memory = Module(new LineMemory)
+  val memory = Module(new LineMemory())
 
   memory.io.wrEna  := false.B
   memory.io.wrAddr := 0.U
