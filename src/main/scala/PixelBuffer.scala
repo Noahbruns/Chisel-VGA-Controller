@@ -51,11 +51,11 @@ class PixelBuffer() extends Module {
 
   //Used to fill the memory 
   val colorCount = RegInit(0.U(1.W))
-  when(colorCount <= 1600){
+  when(colorCount <= 1600.U){
     memory.io.wrEna  := true.B
     memory.io.wrAddr := colorCount
     memory.io.wrData := lila
-    colorCount = :colorCount + 1.U
+    colorCount := colorCount + 1.U
   }
 
   memory.io.wrEna  := false.B
