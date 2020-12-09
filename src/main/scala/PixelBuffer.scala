@@ -41,25 +41,45 @@ class PixelBuffer() extends Module {
 
   val memory = Module(new LineMemory())
 
+  //A few colors
+  val lila = RegInit(18532.U(16.W)) 
+  val blue = RegInit(13298.U(16.W))
+  val green = RegInit(2610.U(16.W)) 
+  val yellow = RegInit(59150.U(16.W)) 
+  val orange = RegInit(58304.U(16.W)) 
+  val red = RegInit(51336.U(16.W)) 
+
+  //Used to fill the memory 
+  val colorCount = RegInit(0.U(1.W))
+  when(colorCount <= 1600){
+    memory.io.wrEna  := true.B
+    memory.io.wrAddr := colorCount
+    memory.io.wrData := lila
+    colorCount = :colorCount + 1.U
+  }
+
   memory.io.wrEna  := false.B
   memory.io.wrAddr := 0.U
   memory.io.wrData := 0.U
 
-  when(io.enable === 1.U) {
-    when(io.v_pos(0)) {
+  when(io.v_pos(0) === 0.B) {
+    when(io.enable === 1.U) {
       memory.io.rdAddr := io.h_pos + line_width.U
-    }.otherwise{
-      memory.io.rdAddr := io.h_pos
+    }.otherwise {
+      memory.io.rdAddr := 0.U // Prepare for next line
     }
   }.otherwise{
-    memory.io.rdAddr := 0.U
+    when(io.enable === 1.U) {
+      memory.io.rdAddr := io.h_pos
+    }.otherwise {
+      memory.io.rdAddr := line_width.U // Prepare for next line
+    }
   }
   val rdData = memory.io.rdData
 
   io.R := 0.U
   io.G := 0.U
   io.B := 0.U
-
   when(io.enable === 1.U) {
     io.R := rdData(14, 10) << 3
     io.G := rdData(9, 5) << 3
